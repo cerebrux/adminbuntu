@@ -1,0 +1,58 @@
+#!/usr/bin/perl -w
+#
+# generate_rotate_filename
+#
+# Documentation page for this script: http://www.adminbuntu.com/generate_rotate_filename
+#
+# generate a filename that automatically rotates backup files
+#
+# Filenames are generated based on the current date and day of the week such that as backup files
+# are created most files are overwritten by subsequent files, but certain files are retained. The
+# result being automatically rotating backups.
+#
+# File names generated:
+#
+# | On the first of the year       | 2013-1st                 |
+# | On the first of the month      | feb-1st                  |
+# | On the first of the week       | mon-1, mon-2, etc.       |
+# | Any other day                  | tue, wed, etc.           |
+#
+# Example of use in a shell script
+#
+# filename_out=$filename_in"-"`generate_rotate_filename`
+#
+
+use strict;
+use warnings;
+use DateTime;
+
+my $date_now = DateTime->now();
+my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) = localtime(time);
+$year += 1900;
+my $date_time = sprintf "%4d-%02d-%02d %02d:%02d:%02d", $year, $mon + 1, $mday, $hour, $min, $sec;
+my $date     = sprintf "%4d-%02d-%02d",                $year, $mon + 1, $mday;
+my @weekdays = qw( sun mon tue wed thu fri sat );
+my $weekday  = $weekdays[$wday];
+my @months   = qw( jan feb mar apr may jun jul aug sep oct nov dec );
+my $month    = $months[$mon];
+my $week_of_month = $date_now->week_of_month;
+my $generated_filename = "";
+
+# if the first day of the year, set $generated_filename like: 2009-1st
+if ( $yday == 1 ) {
+	$generated_filename = "$year-1st";
+}
+# if the first day of the month, set $generated_filename like: feb-1st
+elsif ( $mday == 1 ) {
+	$generated_filename = "$month-1st";
+}
+# if the first day of the week, set $generated_filename like: mon-1
+# where the number is the week of the month number
+elsif ( $wday == 1 ) {
+	$generated_filename = "$weekday-$week_of_month";
+}
+# otherwise, set the $generated_filename like: mon
+else {
+	$generated_filename = "$weekday";
+}
+print $generated_filename;
