@@ -8,7 +8,7 @@ GROUP="staff"               # group for wordpress instance
 SITESROOT="/base/var/www"   # where websites are located
 URL="www.test.com"          # URL for 
 SITEDIR=$URL                # directory name inside $SITESROOT
-DESTINATION_DIR="public"    # directory unser $SITEDIR where WP files will be located
+DESTINATION_DIR="public"    # directory under $SITEDIR where WP files will be located
 
 # database.php parameters
 DBNAME="test"               # database for this WP instance
