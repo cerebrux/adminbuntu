@@ -2,7 +2,7 @@
 #
 # dumpmysql2s3.pl
 #
-# Documentation page: http://www.adminbuntu.com/backup_mysql_databases_to_aws_s3
+# Script's documentation page: http://www.adminbuntu.com/backup_mysql_databases_to_aws_s3
 #
 # MySQL backup script
 # dumps MySQL databases, creates tarball and backs up result to Amazon S3
