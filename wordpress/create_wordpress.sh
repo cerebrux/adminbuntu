@@ -1,9 +1,11 @@
 #!/bin/bash
 #
+# create_wordpress.sh
+#
+# Script's documentation page: http://www.adminbuntu.com/create_wordpress_instance
+#
 # Create a Wordpress instance on an Ubuntu Server. Customize the parameters near the tops of this
 # script for your server and the WordPress site that you wish to create.
-#
-# create_wordpress.sh
 #
 # Copyright 2013 Andrew Ault
 # 
