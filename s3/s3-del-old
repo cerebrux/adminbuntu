@@ -2,6 +2,8 @@
 #
 # s3-del-old
 #
+# Script's documentation page: http://www.adminbuntu.com/delete_stale_s3_objects
+#
 # Deletes stale objects in a specified bucket on Amazon AWS S3.
 #
 #
