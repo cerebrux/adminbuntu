@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 #
 # backup-dirs-s3
 #
@@ -31,7 +31,7 @@ usage (){
 }
 
 if ! hash generate_rotate_filename 2>/dev/null; then
-    echo "ERROR: generate_rotate_filename.pl is required"
+    echo "ERROR: generate_rotate_filename is required"
 fi
 
 append=`generate_rotate_filename`
@@ -47,7 +47,7 @@ fi
 directories=(${@})
 
 # if fewer than 2 parameters, show usage
-if [ ${#directories[@]} -lt 2 ] then
+if [ ${#directories[@]} -lt 2 ]; then
     usage
     exit 1
 fi
@@ -59,8 +59,7 @@ directory_count=${#directories[@]}
 
 # iterate directories array
 for directory in "${directories[@]}" do
-    if [ $directory = "/" ]
-    then
+    if [ $directory = "/" ]; then
         echo "ERROR: Can't backup /"
         exit 1
     fi
@@ -86,8 +85,7 @@ for directory in "${directories[@]}" do
     # limit tarball size uploaded to s3, if too big split tarball into chunks
     # upload result to s3 bucket
     tarball_filesize=$(stat -c%s "$tarball_filename")
-    if (( $tarball_filesize > $max_tarball_size )) ;
-    then
+    if (( $tarball_filesize > $max_tarball_size )); then
         echo "$tarball_filename is too large to upload to S3 at $tarball_filesize bytes"
         echo "Splitting $tarball_filename into 2Gb chunks"
         split -b10 $tarball_filename "$tarball_filename-"
