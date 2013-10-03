@@ -41,6 +41,7 @@ max_tarball_size=2000000000
 # only root can run this script
 if [ "$(id -u)" != "0" ]; then
     echo "This script must be run as root." 1>&2
+    exit 1
 fi
 
 # array of all directories to back up with a trailing element containing the destination s3 bucket
@@ -58,8 +59,8 @@ unset directories[${#directories[@]}-1]
 directory_count=${#directories[@]}
 
 # iterate directories array
-for directory in "${directories[@]}" do
-    if [ $directory = "/" ]; then
+for directory in "${directories[@]}"; do
+    if [ $directory -eq "/" ]; then
         echo "ERROR: Can't backup /"
         exit 1
     fi
@@ -90,11 +91,11 @@ for directory in "${directories[@]}" do
         echo "Splitting $tarball_filename into 2Gb chunks"
         split -b10 $tarball_filename "$tarball_filename-"
         rm $tarball_filename
-        s3cmd put *$ext* $s3bucket
+        s3cmd put *$ext* $s3_destination
         rm *"-${append}${ext}"* 2> /dev/null
     else
-        echo "Uploading $tarball_filename"
-        s3cmd put $tarball_filename $s3bucket
+        echo "Uploading $tarball_filename to $s3_destination"
+        s3cmd put $tarball_filename $s3_destination
         rm $tarball_filename 2> /dev/null
     fi
     
