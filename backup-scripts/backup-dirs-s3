@@ -76,6 +76,9 @@ for directory in "${directories[@]}"; do
     bare_directory=${PWD##*/}
     echo "bare_directory: ${bare_directory}"
     
+    tarball_filename=$bare_directory-${append}${ext}
+    echo "tarball_filename: ${tarball_filename}"
+    
     cd ..
     parent_directory=`pwd`
     echo "parent_directory: ${parent_directory}"
