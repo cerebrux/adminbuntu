@@ -60,7 +60,7 @@ directory_count=${#directories[@]}
 
 # iterate directories array
 for directory in "${directories[@]}"; do
-    if [ $directory -eq "/" ]; then
+    if [ $directory = "/" ]; then
         echo "ERROR: Can't backup /"
         exit 1
     fi
