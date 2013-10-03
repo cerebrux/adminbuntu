@@ -65,10 +65,7 @@ for directory in "${directories[@]}"; do
         exit 1
     fi
     
-    tarball_filename=$directory-${append}${ext}
-    echo "tarball_filename: ${tarball_filename}"
-    
-    # change to parent directory
+    # change to directory
     echo "directory: ${directory}"
     cd $directory
     
@@ -77,13 +74,13 @@ for directory in "${directories[@]}"; do
     echo "bare_directory: ${bare_directory}"
     
     tarball_filename=$bare_directory-${append}${ext}
-    echo "tarball_filename: ${tarball_filename}"
     
     cd ..
     parent_directory=`pwd`
     echo "parent_directory: ${parent_directory}"
     
     # create tarball
+    echo "creating tabrball: ${tarball_filename}"
     tar -pczf $tarball_filename $bare_directory
     
     # limit tarball size uploaded to s3, if too big split tarball into chunks
