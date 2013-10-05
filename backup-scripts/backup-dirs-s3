@@ -97,9 +97,8 @@ for directory in "${directories[@]}"; do
         echo "$tarball_filename is too large to upload to S3 at $tarball_filesize bytes"
         echo "Splitting $tarball_filename into 2Gb chunks"
         split -b10 $tarball_filename "$tarball_filename-"
-        rm $tarball_filename
-        s3cmd put *$ext* $s3_destination
-        rm *"-${append}${ext}"* 2> /dev/null
+        s3cmd put $tarball_filename* $s3_destination
+        rm $tarball_filename* 2> /dev/null
     else
         echo "Uploading $tarball_filename to $s3_destination"
         s3cmd put $tarball_filename $s3_destination
