@@ -1,0 +1,112 @@
+#!/bin/bash
+#
+# backup-subdirs-s3
+#
+# Script's documentation page: http://www.adminbuntu.com/backup_subdirectories_to_aws_s3
+#
+# Backs up all subdirectories of a specifed directory to an Amazon AWS S3 bucket
+#
+#
+# Copyright 2013 Andrew Ault
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+# and associated documentation files (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge, publish, distribute,
+# sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in all copies or
+# substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+# NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+# DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+
+usage (){
+    echo "backup-subdirs-s3"
+    echo " "
+    echo "Backs up all subdirectories of a specified directory as tarballs to Amazon S3."
+    echo " "
+    echo "Must be run as root because attributes and ownership is preserved in tarballs."
+    echo " "
+    echo Usage: backup-subdirs-s3 directory1  s3destination
+    echo Example: sudo backup-subdirs-s3 "directory/directory" "s3://destination-bucket"
+    echo " "
+}
+
+if ! hash generate_rotate_filename 2>/dev/null; then
+    echo "ERROR: generate_rotate_filename is required"
+fi
+
+append=`generate_rotate_filename`
+ext=".tgz"
+max_tarball_size=2000000000
+
+# only root can run this script
+if [ "$(id -u)" != "0" ]; then
+    echo "This script must be run as root." 1>&2
+    exit 1
+fi
+
+# if not 2 parameters, show usage and exit
+if [ $# -ne 2 ]; then
+    usage
+    exit 1
+fi
+
+s3_destination=$2       # where to put tarballs
+
+# change to directory that contains the subdirectories to back up
+cd $1
+directory=`pwd`
+echo "directory: ${directory}"
+
+subdirectories=(*/)     # subdirectrories that will be tarballed and put on S3
+
+# if there are no subdirectories to back up, exit with message
+if [ subdirectories != '*/' ]; then
+    echo "There are no subdiectories in '$directory' to back up." 1>&2
+    exit 1
+fi
+
+for subdirectory in "${subdirectories[@]}"; do
+    
+    # change to subdirectory
+    echo "subdirectory to backup: ${subdirectory}"
+    cd $dir
+    
+    # get bare name of subdirectory to back up
+    bare_subdirectory=${PWD##*/}
+    echo "bare subdirectory: ${bare_subdirectory}"
+    
+    # create tarball filename, replace spaces with dashes
+    tarball_filename=$bare_subdirectory-${append}${ext}
+    tarball_filename = ${tarball_filename// /-}
+    
+    cd $directory
+    
+    # create tarball
+    echo "creating tarball: ${tarball_filename}"
+    tar -pczf $tarball_filename "${bare_subdirectory}"
+    
+    # limit tarball size uploaded to s3, if too big split tarball into chunks
+    # upload result to s3 bucket
+    tarball_filesize=$(stat -c%s "${tarball_filename}")
+    if (( $tarball_filesize > $max_tarball_size )); then
+        echo "$tarball_filename is too large to upload to S3 at $tarball_filesize bytes"
+        echo "Splitting $tarball_filename into 2 Gb chunks"
+        split -b10 $tarball_filename "${tarball_filename}-"
+        # delete existing split tarballs with this base filename in case the subdirectory is smaller now
+        s3cmd del "${tarball_filename}*"
+        s3cmd put $tarball_filename* $s3_destination
+        rm $tarball_filename* 2> /dev/null
+    else
+        echo "Uploading $tarball_filename to ${s3_destination}"
+        s3cmd put $tarball_filename $s3_destination
+        rm $tarball_filename 2> /dev/null
+    fi
+    
+done
