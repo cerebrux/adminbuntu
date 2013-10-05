@@ -24,9 +24,12 @@
 #
 
 usage (){
+    echo "backup-subdirs-s3"
+    echo " "
+    echo "Must be run as root because attributes and ownership is preserved in tarballs."
     echo " "
     echo Usage: backup-dirs-s3 directory1 [directory2...] s3destination
-    echo Example: backup-dirs-s3 "directory/directory" "directory/another" "s3://destination-bucket"
+    echo Example: sudo backup-dirs-s3 "directory/directory" "directory/another" "s3://destination-bucket"
     echo " "
 }
 
@@ -73,7 +76,9 @@ for directory in "${directories[@]}"; do
     bare_directory=${PWD##*/}
     echo "bare_directory: ${bare_directory}"
     
+    # create tarball filename and replace spaces with dashes
     tarball_filename=$bare_directory-${append}${ext}
+    tarball_filename = ${tarball_filename// /-}
     
     cd ..
     parent_directory=`pwd`
@@ -81,7 +86,7 @@ for directory in "${directories[@]}"; do
     
     # create tarball
     echo "creating tabrball: ${tarball_filename}"
-    tar -pczf $tarball_filename $bare_directory
+    tar -pczf $tarball_filename "${bare_directory}"
     
     # limit tarball size uploaded to s3, if too big split tarball into chunks
     # upload result to s3 bucket
