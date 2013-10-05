@@ -2,6 +2,8 @@
 #
 # backup-dirs-s3
 #
+# Script's documentation page: http://www.adminbuntu.com/backup_directories_to_aws_s3
+#
 # Backs up one or more directories to an Amazon AWS S3 bucket
 #
 #
