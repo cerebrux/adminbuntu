@@ -1,0 +1,47 @@
+#!/bin/bash
+#
+# keymap
+#
+# Script's documentation page: http://www.adminbuntu.com/bash_keymap
+#
+# Show standard Bash terminal key mappings
+#
+#
+# Copyright 2013 Andrew Ault
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+# and associated documentation files (the "Software"), to deal in the Software without restriction,
+# including without limitation the rights to use, copy, modify, merge, publish, distribute,
+# sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in all copies or
+# substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+# NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+# DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+
+echo " "
+echo -e "ctrl-a\t\t\tMove to the start of the line."
+echo -e "ctrl-e\t\t\tMove to the end of the line."
+echo -e "Alt-] x\t\t\tMoves the cursor forward to the next occurrence of x."
+echo -e "Alt-ctrl-] x	\tMoves the cursor backwards to the previous occurrence of x."
+echo -e "ctrl-u\t\t\tDelete from the cursor to the beginning of the line."
+echo -e "ctrl-k\t\t\tDelete from the cursor to the end of the line."
+echo -e "ctrl-w\t\t\tDelete from the cursor to the start of the word."
+echo -e "ctrl-y\t\t\tPastes text from the clipboard."
+echo -e "ctrl-l\t\t\tClear the screen leaving the current line at the top of the screen."
+echo -e "ctrl-x ctrl-u\t\tUndo the last changes. ctrl-_"
+echo -e "Alt-r\t\t\tUndo all changes to the line."
+echo -e "Alt-ctrl-e\t\tExpand command line."
+echo -e "ctrl-r\t\t\tIncremental reverse search of history."
+echo -e "Alt-p\t\t\tNon-incremental reverse search of history."
+echo -e "!!\t\t\tExecute last command in history."
+echo -e "!abc\t\t\tExecute last command in history beginning with 'abc'."
+echo -e "!n\t\t\tExecute nth command in history."
+echo -e "^abc^xyz\t\tReplace first occurrence of 'abc' with 'xyz' in last command and execute it."
+echo " "
