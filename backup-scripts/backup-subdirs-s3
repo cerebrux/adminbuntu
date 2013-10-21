@@ -97,8 +97,8 @@ for subdirectory in "${subdirectories[@]}"; do
     tarball_filesize=$(stat -c%s "${tarball_filename}")
     if (( $tarball_filesize > $max_tarball_size )); then
         echo "$tarball_filename is too large to upload to S3 at $tarball_filesize bytes"
-        echo "Splitting $tarball_filename into 2 Gb chunks"
-        split -b10 $tarball_filename "${tarball_filename}-"
+        echo "Splitting $tarball_filename into 1 Gb chunks"
+        split -b1024M $tarball_filename "${tarball_filename}-"
         # delete existing split tarballs with this base filename in case the subdirectory is smaller now
         s3cmd del "${tarball_filename}*"
         s3cmd put $tarball_filename* $s3_destination

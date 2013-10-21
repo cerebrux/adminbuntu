@@ -87,7 +87,7 @@ for directory in "${directories[@]}"; do
     echo "parent_directory: ${parent_directory}"
     
     # create tarball
-    echo "creating tabrball: ${tarball_filename}"
+    echo "creating tarball: ${tarball_filename}"
     tar -pczf $tarball_filename "${bare_directory}"
     
     # limit tarball size uploaded to s3, if too big split tarball into chunks
@@ -95,8 +95,8 @@ for directory in "${directories[@]}"; do
     tarball_filesize=$(stat -c%s "$tarball_filename")
     if (( $tarball_filesize > $max_tarball_size )); then
         echo "$tarball_filename is too large to upload to S3 at $tarball_filesize bytes"
-        echo "Splitting $tarball_filename into 2Gb chunks"
-        split -b10 $tarball_filename "$tarball_filename-"
+        echo "Splitting $tarball_filename into 1Gb chunks"
+        split -b1024M $tarball_filename "$tarball_filename-"
         # delete existing split tarballs with this base filename in case the directory is smaller now
         s3cmd del "${tarball_filename}*"
         s3cmd put $tarball_filename* $s3_destination
