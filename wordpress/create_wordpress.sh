@@ -49,16 +49,16 @@ if [[ $UID -ne 0 ]]; then
 fi
 
 if [ ! -d $SITESROOT ]; then
-	echo "$SITESROOT directory does not exist"
-	exit
+    echo "$SITESROOT SITESROOT directory does not exist"
+    exit
 fi
  
 # change to the siteroot directory
 cd $SITESROOT
  
 if [ -d $SITEDIR ]; then
-	echo "$SITESROOT/$SITEDIR directory already exists"
-	exit
+    echo "$SITESROOT/$SITEDIR directory already exists"
+    exit
 fi 
  
 mkdir $SITEDIR
@@ -68,21 +68,22 @@ cd $SITEDIR
 # check for existence of the specified user owner
 /bin/egrep  -i "^$USER" /etc/passwd > /dev/null
 if [ ! $? -eq 0 ]; then
-   echo "User $USER, which is specified as the owner, does not exist in /etc/passwd"
-   exit
+    echo "User $USER, which is specified as the owner, does not exist in /etc/passwd"
+    exit
 fi
  
 # check for existence of the specified group
 /bin/egrep -i "^$GROUP" /etc/group > /dev/null
 if [ ! $? -eq 0 ]; then
-   echo "User $GROUPNAME, which is specified as the group to use, does not exist in /etc/group"
-   exit
+    echo "User $GROUPNAME, which is specified as the group to use, does not exist in /etc/group"
+    exit
 fi
 
 # get Wordpress
 echo 'get Wordpress'
 wget -O wordpress.tgz $WORDPRESS_URL
 tar -xzvf wordpress.tgz
+rm wordpress.tgz
 mv wordpress $DESTINATION_DIR
 sudo chown -R $OWNER:$GROUP $DESTINATION_DIR
 find . -type d -exec chmod g+ws {} \;
@@ -123,20 +124,21 @@ touch logs/combined.log
 # create Apache virtual site
 echo creating Apache virtual site file in /etc/apache2/sites-available
 echo "<VirtualHost *:80>
-	ServerName $URL
-	DocumentRoot $SITESROOT/$SITEDIR/$DESTINATION_DIR
-	DirectoryIndex index.php
-	LogLevel warn
-	ErrorLog $SITESROOT/$SITEDIR/logs/error.log
-	CustomLog $SITESROOT/$SITEDIR/logs/combined.log combined
+\tServerName $URL
+\tDocumentRoot $SITESROOT/$SITEDIR/$DESTINATION_DIR
+\tDirectoryIndex index.php
+\tLogLevel warn
+\tErrorLog $SITESROOT/$SITEDIR/logs/error.log
+\tCustomLog $SITESROOT/$SITEDIR/logs/combined.log combined
 </VirtualHost>
 " > /etc/apache2/sites-available/$SITEDIR
 
 # finish up with instructions to admin
 echo -e "To finish, do the following:\n"
 echo "1. Enable site with: sudo a2ensite $SITEDIR"
-echo "2. Restart Apache with: service apache2 reload"
-echo -e "3. Create a MySQL database with:\n"
+echo "2. Test Apache2 configuration: sudo /usr/sbin/apache2ctl configtest"
+echo "3. Restart Apache with: service apache2 reload"
+echo -e "4. Create a MySQL database with:\n"
 echo -e "\t     user: $DBUSER"
 echo -e "\t      pwd: $DBPWD"
 echo -e "\t     host: $DBHOST"
@@ -145,7 +147,6 @@ echo -e "\nVia the command line:"
 echo -e 'mysql --user=root --password=ROOTPASSWORDHERE -e "CREATE USER '$DBUSER'@'$DBHOST';"'
 echo -e 'mysql --user=root --password=ROOTPASSWORDHERE -e "CREATE DATABASE '$DBNAME';"'
 echo -e 'mysql --user=root --password=ROOTPASSWORDHERE -e "GRANT ALL PRIVILEGES ON '$DBNAME' . * TO '$DBUSER'@'$DBHOST';"'
-
 echo -e "mysql --user=root --password=ROOTPASSWORDHERE -e \"SET PASSWORD FOR  '$DBUSER'@'$DBHOST' = PASSWORD( '$DBPWD' );\""
 
-echo "4. Open http://$URL/wp-admin/install.php and finish the set-up."
+echo "5. Open http://$URL/wp-admin/install.php and finish the set-up."
