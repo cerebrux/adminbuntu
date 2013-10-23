@@ -33,7 +33,6 @@ USER="usernamehere"                                               # user that ow
 GROUP="staff"                                               # group for this installation, like "staff"
 APACHE_USER="www-data"                                      # apache2's user like "www-data"
 APACHE_GROUP="www-data"                                     # apache2's group like "www-data"
-URL="www.websitename.com"
  
 #
 # make sure this is run as root
