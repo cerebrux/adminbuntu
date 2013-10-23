@@ -116,14 +116,14 @@ sed -i "s/define('NONCE_SALT',[ \t\t]*'put your unique phrase here');/define('NO
 # logs
 echo "set up logs"
 mkdir logs
-sudo chown $OWNER:www-data logs
+chown $OWNER:www-data logs
 chmod g+ws logs
 touch logs/error.log
 touch logs/combined.log
  
 # create Apache virtual site
 echo creating Apache virtual site file in /etc/apache2/sites-available
-echo "<VirtualHost *:80>
+echo -e "<VirtualHost *:80>
 \tServerName $URL
 \tDocumentRoot $SITESROOT/$SITEDIR/$DESTINATION_DIR
 \tDirectoryIndex index.php
@@ -132,6 +132,7 @@ echo "<VirtualHost *:80>
 \tCustomLog $SITESROOT/$SITEDIR/logs/combined.log combined
 </VirtualHost>
 " > /etc/apache2/sites-available/$SITEDIR
+chown $OWNER:$OWNER /etc/apache2/sites-available/$SITEDIR
 
 # finish up with instructions to admin
 echo -e "To finish, do the following:\n"
