@@ -112,7 +112,4 @@ find $INSTALL_DIR/wp-content -exec chown $APACHE_USER:$APACHE_GROUP {} \;
 find $INSTALL_DIR/wp-content -type d -exec chmod 775 {} \;
 find $INSTALL_DIR/wp-content -type f -exec chmod 664 {} \;
  
-cd $INSTALL_DIR
-chown root:root wp-config.php
- 
 echo "**** Done ****"
