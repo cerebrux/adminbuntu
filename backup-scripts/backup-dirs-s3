@@ -36,7 +36,8 @@ usage (){
 }
 
 if ! hash generate_rotate_filename 2>/dev/null; then
-    echo "ERROR: generate_rotate_filename is required"
+    echo "ERROR: generate_rotate_filename is required" 1>&2
+    exit 1
 fi
 
 append=`generate_rotate_filename`
@@ -66,7 +67,13 @@ directory_count=${#directories[@]}
 # iterate directories array
 for directory in "${directories[@]}"; do
     if [ $directory = "/" ]; then
-        echo "ERROR: Can't backup /"
+        echo "ERROR: Can't backup /" 1>&2
+        exit 1
+    fi
+    
+    # check that directory exists
+    if [ ! -d $directory ]; then
+        echo "ERROR: Specified directory does not exist: $directory" 1>&2
         exit 1
     fi
     
@@ -80,7 +87,7 @@ for directory in "${directories[@]}"; do
     
     # create tarball filename and replace spaces with dashes
     tarball_filename=$bare_directory-${append}${ext}
-    tarball_filename = ${tarball_filename// /-}
+    tarball_filename=${tarball_filename// /-}
     
     cd ..
     parent_directory=`pwd`
